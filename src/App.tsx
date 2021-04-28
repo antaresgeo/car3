@@ -1,24 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, createContext, useContext, Fragment } from "react";
+import "./App.css";
+
+const appContext = createContext({
+  theme: "",
+});
 
 function App() {
+  const datos = {
+    theme: "primary",
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Fragment>
+      Ejemplo flujo de datos normal
+      <div className="App" style={{ background: "red", padding: "30px" }}>
+        Padre {datos.theme}
+        <Header theme={datos.theme} />
+      </div>
+      Ejemplo con Api Context
+      <appContext.Provider value={datos}>
+        <div className="App" style={{ background: "red", padding: "30px" }}>
+          Padre {datos.theme}
+          <Header />
+        </div>
+      </appContext.Provider>
+    </Fragment>
+  );
+}
+
+function Header(props: any) {
+  const contex = useContext(appContext);
+  return (
+    <div style={{ background: "blue", padding: "30px", color: "white" }}>
+      Hijo {props.theme ? props.theme : contex.theme}
+      <Container theme={props.theme} />
+    </div>
+  );
+}
+
+function Container(props: any) {
+  return (
+    <div style={{ background: "yellow", padding: "30px", color: "black" }}>
+      Nieto {props.theme}
+      <Container2 theme={props.theme} />
+    </div>
+  );
+}
+
+function Container2(props: any) {
+  return (
+    <div style={{ background: "green", padding: "30px", color: "black" }}>
+      Nieto2 {props.theme}
     </div>
   );
 }
