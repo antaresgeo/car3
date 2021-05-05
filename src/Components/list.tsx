@@ -1,34 +1,100 @@
-import React, { FC, useEffect, useState } from "react";
-import { list } from "../Services";
+import React, { FC, ReactElement, useEffect, useState } from "react";
+import { connect } from "react-redux";
+import actions from "../redux/actions";
 
-interface OwnProps {}
+interface OwnProps {
+  list: any[];
+  listUsers: Function;
+  list_is_loading: boolean;
+  page: number;
+}
+
+interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+}
+
+export interface Action {
+  type: string;
+  payload: any;
+  error?: any;
+}
+
+const action = {
+  type: "depositar",
+  payload: 10,
+};
 
 const List: FC<OwnProps> = (props) => {
-  const [user_list, set_user_list] = useState<any[]>([]);
+  const { list, listUsers, list_is_loading, page } = props;
+
+  console.log({ list, listUsers, list_is_loading });
+
   useEffect(() => {
-    list(1)
-      .then((response) => {
-        set_user_list(response?.data?.data);
-      })
-      .catch((e) => {
-        console.log("Error", { ...e });
-      });
+    // listUsers(1);
   }, []);
+
   return (
     <div>
-      {user_list.length > 0 && (
-        <ul>
-            {user_list.map((user, index) => {
-                return <li key={`user_${index}`}>
-                    <span>{user.first_name} {user.last_name}</span>
-                    <img src={user.avatar} alt="User" width={100}/>
-                </li>
-            })}
-        </ul>
-      )}
-      {user_list.length === 0 && <span>Users no found</span>}
+      <div className="container">
+        <div className="row">
+          <button
+            onClick={function (e) {
+              listUsers(page === 1 ? 2 : 1);
+            }}
+          >
+            cargar pagina
+          </button>
+
+          {list_is_loading && <span>Loading ...</span>}
+          {!list_is_loading && (
+            <div className="col-md-8">
+              {list?.length > 0 && (
+                <div className="people-nearby">
+                  {list.map((user, index) => {
+                    return (
+                      <div className="nearby-user" key={`user_${index}`}>
+                        <div className="row">
+                          <div className="col-md-2 col-sm-2">
+                            <img
+                              src={user.avatar}
+                              alt="user"
+                              className="profile-photo-lg"
+                            />
+                          </div>
+                          <div className="col-md-7 col-sm-7">
+                            <h5>
+                              <span className="profile-link">
+                                {user.first_name} {user.last_name}
+                              </span>
+                            </h5>
+                            <p>{user.email}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {list?.length === 0 && <span>Users no found</span>}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default List;
+const mapStateToProps = (store: any) => ({
+  list: store.users.list,
+  list_is_loading: store.users.list_is_loading,
+  page: store.users.page,
+});
+const mapDispatchToProps = (dispatch: Function) => ({
+  listUsers: (page: number) => dispatch(actions.ListUsers(page)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);
