@@ -1,7 +1,6 @@
-import React, { FC, ReactElement, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { connect } from "react-redux";
 import actions from "../redux/actions";
-
 interface OwnProps {
   list: any[];
   listUsers: Function;
@@ -9,13 +8,6 @@ interface OwnProps {
   page: number;
 }
 
-interface User {
-  id: number;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar: string;
-}
 
 export interface Action {
   type: string;
@@ -23,10 +15,6 @@ export interface Action {
   error?: any;
 }
 
-const action = {
-  type: "depositar",
-  payload: 10,
-};
 
 const List: FC<OwnProps> = (props) => {
   const { list, listUsers, list_is_loading, page } = props;
@@ -48,7 +36,6 @@ const List: FC<OwnProps> = (props) => {
           >
             cargar pagina
           </button>
-
           {list_is_loading && <span>Loading ...</span>}
           {!list_is_loading && (
             <div className="col-md-8">

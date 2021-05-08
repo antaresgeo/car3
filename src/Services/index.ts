@@ -15,7 +15,7 @@ api_rest.interceptors.request.use((config) => {
 });
 
 api_rest.interceptors.response.use((respose) => {
-  const { config, data, headers, request, status, statusText } = respose;
+  const { config } = respose;
   if (config.url === "/api/users" && config.method === "get") {
     respose.data.data = respose?.data?.data?.map((user: any, index: number) => {
       user.app_id = index;
@@ -26,8 +26,7 @@ api_rest.interceptors.response.use((respose) => {
 });
 
 export const list = (pagina: number = 1) =>
-  api_rest
-    .get("/api/users", { params: { page: pagina } })
+  api_rest.get("/api/users", { params: { page: pagina } });
 
 export const create = (name: string, job: string) =>
   api_rest.post("/api/users", { name, job });
